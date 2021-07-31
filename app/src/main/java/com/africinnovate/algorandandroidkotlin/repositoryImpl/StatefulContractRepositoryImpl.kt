@@ -55,7 +55,7 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
 
     // user declared account mnemonics
     val creatorMnemonic = CREATOR_MNEMONIC
-    val userMnemonic = "A second distinct 25-word mnemonic goes here"
+    val userMnemonic = USER_MNEMONIC
 
     // declare application state storage (immutable)
     var localInts = 1
@@ -787,4 +787,5 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             }
         }
     }
+
 }

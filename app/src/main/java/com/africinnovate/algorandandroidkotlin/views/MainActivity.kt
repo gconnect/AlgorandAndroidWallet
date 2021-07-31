@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.NetworkOnMainThreadException
 import android.os.StrictMode
+import android.widget.Button
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import com.africinnovate.algorandandroidkotlin.R
 import com.africinnovate.algorandandroidkotlin.utils.Constants.FUND_ACCOUNT
 import com.africinnovate.algorandandroidkotlin.viewmodel.AccountViewmodel
 import com.africinnovate.algorandandroidkotlin.viewmodel.StatefulSmartContractViewModel
+import com.africinnovate.algorandandroidkotlin.viewmodel.StatelessSmartContractViewModel
 import com.africinnovate.algorandandroidkotlin.viewmodel.TransactionViewmodel
 import dagger.hilt.android.AndroidEntryPoint
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -24,12 +26,14 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: AccountViewmodel by viewModels()
     private val transactionViewModel: TransactionViewmodel by viewModels()
     private val statefulSmartContractViewModel: StatefulSmartContractViewModel by viewModels()
+    private val statelessSmartContractViewModel: StatelessSmartContractViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val text = findViewById<TextView>(R.id.home)
-        val stflBtn = findViewById<TextView>(R.id.stateful_smart_contract)
+        val stflBtn = findViewById<Button>(R.id.stateful_smart_contract)
+        val stlesBtn = findViewById<Button>(R.id.stateless_smart_contract)
         Security.removeProvider("BC")
         Security.insertProviderAt(BouncyCastleProvider(), 0)
 
@@ -50,6 +54,12 @@ class MainActivity : AppCompatActivity() {
                 //Your code goes here
                 stflBtn.setOnClickListener {
                     statefulSmartContractViewModel.statefulSmartContract()
+                }
+
+                stlesBtn.setOnClickListener {
+                    statelessSmartContractViewModel.compileTealSource()
+                    statelessSmartContractViewModel.contractAccount()
+                    statelessSmartContractViewModel.accountDelegation()
                 }
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
