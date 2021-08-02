@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">AlgorandAndroidKotlin</string>
+    <string name="app_name">Algorand Kotlin Wallet</string>
+    <string name="total_balance">Total Balance</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="receiver_address">MJ7TSXAAPMXSHPYPLB5EPPZ3AAJCLRI45YLYO7HS5SY5RXFBQOSAOQVIJ4</string>
+    <string name="creator_address">Creator Address</string>
+    <string name="account_address">Wallet Address</string>
+    <string name="Logout">Logout</string>
+    <string name="stateful_smart_contract">Stateful Smart Contract</string>
+    <string name="stateless_smart_contract">Stateless Smart Contract</string>
+    <string name="wallets">Welcome to the \n Algorand Wallet</string>
 </resources>

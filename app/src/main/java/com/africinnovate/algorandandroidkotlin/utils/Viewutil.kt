@@ -9,12 +9,13 @@ import android.content.ClipboardManager
 import android.content.Context.CLIPBOARD_SERVICE
 import android.net.ConnectivityManager
 import android.widget.EditText
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 
 
 object Viewutil {
 
-    fun copy(text: EditText, context: Context) {
+    fun copy(text: TextView, context: Context) {
         val startSelection: Int = text.selectionStart
         val endSelection: Int = text.selectionEnd
         if (text.text != null && endSelection > startSelection) {

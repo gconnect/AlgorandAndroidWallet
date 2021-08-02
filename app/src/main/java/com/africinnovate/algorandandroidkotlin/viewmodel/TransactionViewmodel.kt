@@ -7,22 +7,44 @@ import com.africinnovate.algorandandroidkotlin.model.AccountTransactions
 import com.africinnovate.algorandandroidkotlin.model.Transactions
 import com.africinnovate.algorandandroidkotlin.repository.TransactionRepository
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class TransactionViewmodel @ViewModelInject constructor(val repository: TransactionRepository) : ViewModel() {
     private val _transactions : MutableLiveData<AccountTransactions> = MutableLiveData()
     val transactions : LiveData<AccountTransactions> get() = _transactions
+    private val _showMessage : MutableLiveData<String> = MutableLiveData()
+    val showMessage : LiveData<String> get() = _showMessage
 
+    private val _showProgress : MutableLiveData<Boolean> = MutableLiveData()
+    val showProgress : LiveData<Boolean> get() = _showProgress
 
-    fun transferFund() {
-        viewModelScope.launch {
-           repository.transferFund()
+    fun transferFund(amount: Long, receiverAddress : String) {
+        try {
+            viewModelScope.launch {
+                _showProgress.value = true
+                repository.transferFund(amount, receiverAddress)
+                _showProgress.value = false
+            }
+        }catch (e: Exception){
+            _showMessage.postValue("Unable to connect to server!")
+            _showProgress.postValue(false)
         }
+
     }
 
     fun getTransactions(address: String) : LiveData<AccountTransactions>{
-        viewModelScope.launch {
-           _transactions.value = repository.getTransactionsByAddress(address)
+        try {
+            viewModelScope.launch {
+                _showProgress.value = true
+                _transactions.value = repository.getTransactionsByAddress(address)
+                _showProgress.value = false
+
+            }
+        }catch (e : Throwable){
+            _showMessage.postValue("Unable to connect to server!")
+            _showProgress.postValue(false)
         }
+
         return transactions
     }
 

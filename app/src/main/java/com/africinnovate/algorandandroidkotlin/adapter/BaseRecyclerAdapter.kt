@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.africinnovate.algorandandroidkotlin.BR
+import com.africinnovate.algorandandroidkotlin.model.Transactions
 
 
 /**
@@ -20,14 +21,14 @@ class  BaseRecyclerAdapter : RecyclerView.Adapter<BaseRecyclerAdapter.BaseViewHo
     var layoutId: Int = 0
 
     //List of items that will be inflated in the layout
-    lateinit var items: List<*>
+    var items: List<Transactions> = ArrayList<Transactions>()
 
 
     /**
      * Use [setData] to update the data from the adapter
      * @param edited A list of the generic type
      ***/
-    fun setData(list: List<*>) {
+    fun setData(list: List<Transactions>) {
         items = list
         notifyDataSetChanged()
     }

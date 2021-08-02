@@ -30,4 +30,11 @@ class AccountViewmodel @ViewModelInject constructor(val repository: AccountRepos
         return algodPair
     }
 
+    fun recoverAccount(passsPhrase : String) : LiveData<Account>{
+        viewModelScope.launch {
+           _algodPair.value = repository.recoverAccount(passsPhrase)
+        }
+        return algodPair
+    }
+
 }

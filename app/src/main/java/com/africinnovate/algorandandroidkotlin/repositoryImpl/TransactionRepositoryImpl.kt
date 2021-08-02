@@ -5,9 +5,12 @@ import com.africinnovate.algorandandroidkotlin.model.AccountTransactions
 import com.africinnovate.algorandandroidkotlin.repository.TransactionRepository
 import com.africinnovate.algorandandroidkotlin.utils.Constants
 import com.africinnovate.algorandandroidkotlin.utils.Constants.ALGOD_API_TOKEN_KEY
+import com.africinnovate.algorandandroidkotlin.utils.Constants.CREATOR_ADDRESS
+import com.africinnovate.algorandandroidkotlin.utils.Constants.CREATOR_MNEMONIC
 import com.africinnovate.algorandandroidkotlin.utils.Constants.PASSPHRASE
 import com.africinnovate.algorandandroidkotlin.utils.Constants.RECIEVER
 import com.africinnovate.algorandandroidkotlin.utils.Constants.SENDER
+import com.africinnovate.algorandandroidkotlin.utils.Constants.USER_ADDRESS
 import com.algorand.algosdk.account.Account
 import com.algorand.algosdk.crypto.Address
 import com.algorand.algosdk.transaction.SignedTransaction
@@ -35,7 +38,7 @@ class TransactionRepositoryImpl @Inject constructor(private val apiService: APIS
     var headers = arrayOf("X-API-Key")
     var values = arrayOf(ALGOD_API_TOKEN_KEY)
 
-    override suspend fun transferFund() {
+    override suspend fun transferFund(amount: Long, receiverAddress: String) {
         val passPhrase = PASSPHRASE
         val myAccount = Account(passPhrase)
         // Construct the transaction
@@ -55,8 +58,8 @@ class TransactionRepositoryImpl @Inject constructor(private val apiService: APIS
                     ?: throw Exception("Params retrieval error")
                 val txn: Transaction = Transaction.PaymentTransactionBuilder()
                     .sender(sender)
-                    .amount(100000)
-                    .receiver(Address("VHPCBJFU2SVYNSB3WVO5U4FQ3GCRPCZ3CTGMAUC2YTUDYWUUPWJGEOVQC4"))
+                    .amount(amount)
+                    .receiver(Address(receiverAddress))
                     .suggestedParams(params)
                     .build()
 
@@ -135,5 +138,7 @@ class TransactionRepositoryImpl @Inject constructor(private val apiService: APIS
         }
         return response.body()
     }
+
+
 
 }

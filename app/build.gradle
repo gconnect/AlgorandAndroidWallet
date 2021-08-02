@@ -48,6 +48,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     def lifecycle_version = "2.2.0"
     def hilt_version = '2.28.3-alpha'
     def version_hilt_viewmodel = "1.0.0-alpha02"
@@ -63,6 +64,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'no.tornado.databinding:databinding:1.0'
+    implementation 'com.google.android.material:material:1.4.0'
+//    implementation 'com.androidx.support:design:27.0.0'
+
 
 
     //livedata and coroutines

@@ -1,38 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".views.MainActivity">
+    >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".views.MainActivity">
 
-    <TextView
-        android:id="@+id/home"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:textIsSelectable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/wallet_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome to the \n Algorand Wallet"
+                android:layout_marginTop="36dp"
+                android:textStyle="bold"
+                android:textSize="24dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/stateful_smart_contract"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stateful Smart Contract"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/home"/>
+            <TextView
+                android:id="@+id/sub_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create or import a wallet to start sending\n and receiving digital currency"
+                android:textIsSelectable="true"
+                android:layout_marginTop="36dp"
+                android:textSize="18sp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/wallet_title" />
 
-    <Button
-        android:id="@+id/stateless_smart_contract"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stateless Smart Contract"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/stateful_smart_contract"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/create_constraint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_margin="24dp"
+                app:layout_constraintTop_toBottomOf="@id/sub_text"
+                >
+                <TextView
+                    android:id="@+id/public_key"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Public Key"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginTop="36dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/public_key_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Public Key"
+                    android:textSize="18sp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:textIsSelectable="true"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/public_key" />
+
+                <TextView
+                    android:id="@+id/new_passphrase_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mnemomic/ Passhrase"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:textIsSelectable="true"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/public_key_address" />
+
+                <TextView
+                    android:id="@+id/new_passphrase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mnemomic/ Passhrase"
+                    android:textSize="18sp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:textIsSelectable="true"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/new_passphrase_tv" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                android:id="@+id/create_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create Account"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/create_constraint"
+                />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/recovery_constraint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_margin="24dp"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@id/create_account"
+                >
+                <TextView
+                    android:id="@+id/recovery_public_key"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Recovery Public Key"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginTop="36dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/recovery_public_key_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Public Key"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="24dp"
+                    android:textIsSelectable="true"
+                    android:textSize="18sp"
+                    android:layout_marginRight="24dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recovery_public_key" />
+                <TextView
+                    android:id="@+id/recovery_passphrase_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Recovery Mnemomic/ Passhrase"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="24dp"
+                    android:textIsSelectable="true"
+                    android:textSize="18sp"
+                    android:layout_marginRight="24dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recovery_public_key_address" />
+
+                <TextView
+                    android:id="@+id/recovery_passphrase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mnemomic/ Passhrase"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="24dp"
+                    android:textIsSelectable="true"
+                    android:textSize="18sp"
+                    android:layout_marginRight="24dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recovery_passphrase_tv" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <Button
+                android:id="@+id/recovery_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Recover Account "
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/recovery_constraint"
+                />
+
+            <Button
+                android:id="@+id/dashboard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dashboard"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/recovery_account"
+                />
+            <Button
+                android:id="@+id/stfl_contract"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Stateful Smart Contract "
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/dashboard"
+                />
+            <Button
+                android:id="@+id/stlss_contract"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Stateless Smart Contract "
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/stfl_contract"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</layout>

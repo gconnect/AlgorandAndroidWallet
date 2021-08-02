@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/stateful_smart_contract"
+        android:title="@string/stateful_smart_contract" />
+    <item
+        android:id="@+id/stateless_smart_contract"
+        android:title="@string/stateless_smart_contract" />
+    <item
+        android:id="@+id/logout"
+        android:title="@string/Logout" />
+
+</menu>

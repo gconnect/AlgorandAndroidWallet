@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".views.Dashboard">
+
+        <TextView
+            android:id="@+id/total_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            android:text="@string/total_balance"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_margin="24dp"
+            android:src="@drawable/algo_logo"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/total_tv" />
+
+        <TextView
+            android:id="@+id/balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="8dp"
+            android:text="0"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toRightOf="@id/logo"
+            app:layout_constraintTop_toBottomOf="@id/total_tv" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/balance"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            app:layout_constraintRight_toRightOf="@id/receive"
+            android:src="@drawable/ic_send"
+            app:layout_anchor="@id/balance"
+            app:layout_anchorGravity="bottom|right|end"
+            />
+        <TextView
+            android:id="@+id/send_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="@id/receive"
+            app:layout_constraintTop_toBottomOf="@id/send"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Send"
+           />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/receive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/balance"
+            app:layout_constraintLeft_toRightOf="@id/send"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:src="@drawable/ic_receive_24"
+            app:layout_anchor="@id/balance"
+            app:layout_anchorGravity="bottom|right|end"
+            />
+
+        <TextView
+            android:id="@+id/receive_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/receive"
+            app:layout_constraintLeft_toRightOf="@id/send"
+            app:layout_constraintRight_toLeftOf="@id/copy_tv"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Recieve" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/copy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/balance"
+            app:layout_constraintLeft_toRightOf="@id/receive"
+            android:layout_gravity="bottom|right"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_baseline_content_copy_24"
+            app:layout_anchor="@id/balance"
+            app:layout_anchorGravity="bottom|right|end"
+            />
+
+        <TextView
+            android:id="@+id/copy_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/receive"
+            app:layout_constraintLeft_toRightOf="@id/send"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Copy"/>
+
+        <TextView
+            android:id="@+id/transactions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            android:text="Transactions"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/send_tv" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="280dp"
+            app:layout_constraintBottom_toBottomOf="@id/transactions"
+            app:layout_constraintTop_toBottomOf="@+id/transactions"
+            tools:listitem="@layout/transactions_list_items" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:elevation="20dp"
+            app:layout_constraintBottom_toBottomOf="@id/recyclerview"
+            app:layout_constraintLeft_toLeftOf="@id/recyclerview"
+            app:layout_constraintRight_toRightOf="@id/recyclerview"
+            app:layout_constraintTop_toTopOf="@id/recyclerview" />
+
+        <TextView
+            android:id="@+id/emptyState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="No Transactions"
+            android:visibility="gone"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/recyclerview"
+            app:layout_constraintLeft_toLeftOf="@id/recyclerview"
+            app:layout_constraintRight_toRightOf="@id/recyclerview"
+            app:layout_constraintTop_toTopOf="@id/recyclerview" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

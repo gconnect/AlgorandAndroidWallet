@@ -1,9 +1,12 @@
 package com.africinnovate.algorandandroidkotlin.repositoryImpl
 
 import android.os.Build
+import androidx.annotation.RequiresApi
 import com.africinnovate.algorandandroidkotlin.ClientService.APIService
 import com.africinnovate.algorandandroidkotlin.repository.StateLessContractRepository
 import com.africinnovate.algorandandroidkotlin.utils.Constants
+import com.africinnovate.algorandandroidkotlin.utils.Constants.CREATOR_MNEMONIC
+import com.africinnovate.algorandandroidkotlin.utils.Constants.USER_ADDRESS
 import com.algorand.algosdk.account.Account
 import com.algorand.algosdk.algod.client.ApiException
 import com.algorand.algosdk.crypto.Address
@@ -16,7 +19,11 @@ import com.algorand.algosdk.v2.client.common.Response
 import com.algorand.algosdk.v2.client.model.PendingTransactionResponse
 import org.apache.commons.lang3.ArrayUtils
 import org.json.JSONObject
-import java.nio.file.Files
+import java.io.BufferedInputStream
+import java.io.DataInputStream
+import java.io.File
+import java.io.FileInputStream
+import java.nio.file.Files.readAllBytes
 import java.nio.file.Paths
 import java.util.*
 import javax.inject.Inject
@@ -40,23 +47,32 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
     val txHeaders: Array<String> = ArrayUtils.add(headers, "Content-Type")
     val txValues: Array<String> = ArrayUtils.add(values, "application/x-binary")
 
+  @RequiresApi(Build.VERSION_CODES.O)
   override suspend fun compileTealSource() {
         // Initialize an algod client
         if (client == null) client = connectToNetwork()
 
         // read file - int 0
-        val data: ByteArray =
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                Files.readAllBytes(Paths.get("./sample.teal"))
-            } else {
-                TODO("VERSION.SDK_INT < O")
-            }
-        // compile
-        val response = client.TealCompile().source(data).execute().body()
-        // print results
-        println("response: $response")
-        println("Hash: " + response.hash)
-        println("Result: " + response.result)
+//        val data: ByteArray =
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//                Files.readAllBytes(Paths.get("sample.teal"))
+//            } else {
+//                TODO("VERSION.SDK_INT < O")
+//            }
+//      val data = readAllBytes(Paths.get("./sample.teal"))
+
+//      val file = File("./sample.teal")
+//      val bytes = ByteArray(file.length().toInt())
+//      val bis = BufferedInputStream(FileInputStream(file))
+//      val dis = DataInputStream(bis)
+//      dis.readFully(bytes)
+
+      // compile
+//        val response = client.TealCompile().source(data).execute().body()
+//        // print results
+//        println("response: $response")
+//        println("Hash: " + response.hash)
+//        println("Result: " + response.result)
     }
 
   override suspend fun waitForConfirmation(txID: String) {
@@ -91,7 +107,7 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
 
         // Read program from file samplearg.teal
         val source = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Files.readAllBytes(Paths.get("./samplearg.teal"))
+            readAllBytes(Paths.get("./samplearg.teal"))
         } else {
             TODO("VERSION.SDK_INT < O")
         }
@@ -149,14 +165,14 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
         // Initialize an algod client
         if (client == null) client = connectToNetwork()
         // import your private key mnemonic and address
-        val SRC_ACCOUNT = "<25-word-mnemonic>"
+        val SRC_ACCOUNT = CREATOR_MNEMONIC
         val src = Account(SRC_ACCOUNT)
         // Set the receiver
-        val RECEIVER = "<receiver-address>"
+        val RECEIVER = USER_ADDRESS
 
         // Read program from file samplearg.teal
         val source = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            Files.readAllBytes(Paths.get("./samplearg.teal"))
+            readAllBytes(Paths.get("./samplearg.teal"))
         } else {
             TODO("VERSION.SDK_INT < O")
         }
@@ -187,7 +203,7 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
         //    LogicsigSignature lsig = new LogicsigSignature(program, null);
         // sign the logic signature with an account sk
         src.signLogicsig(lsig)
-        val params = client.TransactionParams().execute(headers,values).body()
+        val params = client.TransactionParams().execute(headers, values).body()
         // create a transaction
         val note = "Hello World"
         val txn = Transaction.PaymentTransactionBuilder()
@@ -202,12 +218,12 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
             val stx = Account.signLogicsigTransaction(lsig, txn)
             // send raw LogicSigTransaction to network
             val encodedTxBytes = Encoder.encodeToMsgPack(stx)
-            val id = client.RawTransaction().rawtxn(encodedTxBytes).execute(txHeaders,txValues).body().txId
+            val id = client.RawTransaction().rawtxn(encodedTxBytes).execute(txHeaders, txValues).body().txId
             // Wait for transaction confirmation
             waitForConfirmation(id)
             println("Successfully sent tx with id: $id")
             // Read the transaction
-            val pTrx = client.PendingTransactionInformation(id).execute(headers,values).body()
+            val pTrx = client.PendingTransactionInformation(id).execute(headers, values).body()
             val jsonObj = JSONObject(pTrx.toString())
             println("Transaction information (with notes): " + jsonObj.toString(2)) // pretty print
             println("Decoded note: " + String(pTrx.txn.tx.note))

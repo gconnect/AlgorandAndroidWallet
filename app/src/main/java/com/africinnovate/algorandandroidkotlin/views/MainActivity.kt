@@ -3,13 +3,18 @@ package com.africinnovate.algorandandroidkotlin.views
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.NetworkOnMainThreadException
 import android.os.StrictMode
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import com.africinnovate.algorandandroidkotlin.R
+import com.africinnovate.algorandandroidkotlin.databinding.ActivityMainBinding
+import com.africinnovate.algorandandroidkotlin.utils.Constants.CREATOR_ADDRESS
+import com.africinnovate.algorandandroidkotlin.utils.Constants.CREATOR_MNEMONIC
 import com.africinnovate.algorandandroidkotlin.utils.Constants.FUND_ACCOUNT
 import com.africinnovate.algorandandroidkotlin.viewmodel.AccountViewmodel
 import com.africinnovate.algorandandroidkotlin.viewmodel.StatefulSmartContractViewModel
@@ -27,36 +32,34 @@ class MainActivity : AppCompatActivity() {
     private val transactionViewModel: TransactionViewmodel by viewModels()
     private val statefulSmartContractViewModel: StatefulSmartContractViewModel by viewModels()
     private val statelessSmartContractViewModel: StatelessSmartContractViewModel by viewModels()
-
+   lateinit var binding : ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val text = findViewById<TextView>(R.id.home)
-        val stflBtn = findViewById<Button>(R.id.stateful_smart_contract)
-        val stlesBtn = findViewById<Button>(R.id.stateless_smart_contract)
+//        setContentView(R.layout.activity_main)
+//        val text = findViewById<TextView>(R.id.home)
+//        val stflBtn = findViewById<Button>(R.id.stateful_smart_contract)
+//        val stlesBtn = findViewById<Button>(R.id.stateless_smart_contract)
+//        val dashboard = findViewById<Button>(R.id.dasboard)
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
         Security.removeProvider("BC")
         Security.insertProviderAt(BouncyCastleProvider(), 0)
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
-        viewModel.generateAlgodPair().observe(this, {
-            text.text = it.address.toString()
-            Timber.d("address ${it.address}")
-            Timber.d("phrase ${it.toMnemonic()}")
-        })
-        getWalletBalance()
-        transferFund()
-        text.setOnClickListener { fundAccount() }
+        binding.dashboard.setOnClickListener {
+            val intent = Intent(this, Dashboard::class.java)
+            startActivity(intent)
+        }
 
         val thread = Thread {
             try {
                 //Your code goes here
-                stflBtn.setOnClickListener {
+               binding.stflContract.setOnClickListener {
                     statefulSmartContractViewModel.statefulSmartContract()
                 }
 
-                stlesBtn.setOnClickListener {
+                binding.stlssContract.setOnClickListener {
                     statelessSmartContractViewModel.compileTealSource()
                     statelessSmartContractViewModel.contractAccount()
                     statelessSmartContractViewModel.accountDelegation()
@@ -67,43 +70,44 @@ class MainActivity : AppCompatActivity() {
         }
 
         thread.start()
+        binding.createAccount.setOnClickListener {
+            createAccount()
+            if (binding.recoveryConstraint.visibility == View.VISIBLE){
+                binding.createConstraint.visibility = View.VISIBLE
+                binding.recoveryConstraint.visibility = View.GONE
+            }else{
+                binding.createConstraint.visibility = View.VISIBLE
+            }
 
-        transactionViewModel.getTransactions("RPP7BXWZ3TVFR2FRWAFX5TH6GNP5PZNGCVCZPMFOP5MX376Q7Q2MA2YEDU")
-            .observe(this, {
-                try {
-                    Timber.d("transactions ${it.transactions}")
-                } catch (e: Exception) {
-                    e.message
-                }
-            })
-    }
-
-    private fun getWalletBalance() {
-        viewModel.getAccount("LY2MVEUGJ2Q73NY3FMG36SKSTECCV2W5CB33ZWLNGOLDJKOQJXPPPCPLV4")
-            .observe(this, {
-                try {
-                    it.account.amount
-                    Timber.d("amount ${it.account.amount}")
-                } catch (e: Exception) {
-                    e.message
-                }
-            })
-    }
-
-    private fun transferFund() {
-        transactionViewModel.transferFund()
-    }
-
-    private fun fundAccount() {
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(FUND_ACCOUNT))
-        try {
-            if (!FUND_ACCOUNT.startsWith("http://") && !FUND_ACCOUNT.startsWith("https://"))
-                FUND_ACCOUNT = "http://" + FUND_ACCOUNT;
-            startActivity(browserIntent)
-        } catch (e: Exception) {
-            Timber.d("Host not available ${e.message}")
         }
+        binding.recoveryAccount.setOnClickListener {
+            recoverAccount()
+            if (binding.createConstraint.visibility == View.VISIBLE){
+                binding.createConstraint.visibility = View.GONE
+                binding.recoveryConstraint.visibility = View.VISIBLE
+            }else{
+                binding.recoveryConstraint.visibility = View.VISIBLE
+            }
+        }
+
+        binding.root
+
     }
 
+   private fun createAccount(){
+       viewModel.generateAlgodPair().observe(this, {
+            binding.publicKeyAddress.text = it.address.toString()
+            binding.newPassphrase.text = it.toMnemonic()
+            Timber.d("address ${it.address}")
+            Timber.d("phrase ${it.toMnemonic()}")
+        })
+    }
+
+    private fun recoverAccount(){
+        viewModel.recoverAccount(CREATOR_MNEMONIC).observe(this, Observer {
+            binding.recoveryPublicKeyAddress.text = it.address.toString()
+            binding.recoveryPassphrase.text = it.toMnemonic()
+        })
+    }
 
 }

@@ -8,7 +8,7 @@ import com.algorand.algosdk.transaction.SignedTransaction
 import timber.log.Timber
 
 interface TransactionRepository {
-    suspend fun transferFund()
+    suspend fun transferFund(amount: Long, receiverAddress: String)
     suspend fun submitTransaction(signedTxn: SignedTransaction): String
     suspend fun waitForConfirmation(txID: String)
     suspend fun getTransactionsByAddress(address : String) : AccountTransactions?
