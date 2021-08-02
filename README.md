@@ -42,7 +42,7 @@ To get started, your android studio should be up and running. To get the code on
   - Dashboard button : This will take you to the dashboard screen. This screen makes use of the recovery account. The dashboard displays the account balance and transactions of the recovery account. Also on the dashboard you can interact with the buttons to send and receive algo. You can also copy the address/public key using the copy icon.
   - Stateful Smart Contract : This is demonstrated in the code and console. Once the button is clicked a log of the response will be displayed. No UI is available for this.
   - Stateless Smart Contract : This is demonstrated in the code and console. Once the button is clicked a log of the response will be displayed. No UI is available for this.
-  - 
+   
   
 # Disclaimer
  This project is not audited and should not be used in a production environment.
