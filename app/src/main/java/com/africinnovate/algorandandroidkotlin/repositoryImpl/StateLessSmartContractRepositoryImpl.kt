@@ -19,11 +19,9 @@ import com.algorand.algosdk.v2.client.common.Response
 import com.algorand.algosdk.v2.client.model.PendingTransactionResponse
 import org.apache.commons.lang3.ArrayUtils
 import org.json.JSONObject
-import java.io.BufferedInputStream
-import java.io.DataInputStream
-import java.io.File
-import java.io.FileInputStream
+import timber.log.Timber
 import java.nio.file.Files.readAllBytes
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 import javax.inject.Inject
@@ -52,29 +50,16 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
         // Initialize an algod client
         if (client == null) client = connectToNetwork()
 
-        // read file - int 0
-//        val data: ByteArray =
-//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//                Files.readAllBytes(Paths.get("sample.teal"))
-//            } else {
-//                TODO("VERSION.SDK_INT < O")
-//            }
-//      val data = readAllBytes(Paths.get("./sample.teal"))
+      // read file - int 0
+      val data = readAllBytes(Paths.get("./sample.teal"))
 
-//      val file = File("./sample.teal")
-//      val bytes = ByteArray(file.length().toInt())
-//      val bis = BufferedInputStream(FileInputStream(file))
-//      val dis = DataInputStream(bis)
-//      dis.readFully(bytes)
+      val response = client.TealCompile().source(data).execute().body()
+      // print results
+      Timber.d("response: $response")
+      Timber.d("Hash: " + response.hash)
+      Timber.d("Result: " + response.result)
 
-      // compile
-//        val response = client.TealCompile().source(data).execute().body()
-//        // print results
-//        println("response: $response")
-//        println("Hash: " + response.hash)
-//        println("Result: " + response.result)
-    }
-
+  }
   override suspend fun waitForConfirmation(txID: String) {
         if (client == null) client = connectToNetwork()
         var lastRound = client.GetStatus().execute(headers, values).body().lastRound
@@ -98,7 +83,8 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
         }
     }
 
-   override suspend fun contractAccountExample() {
+    @RequiresApi(Build.VERSION_CODES.O)
+    override suspend fun contractAccountExample() {
         // Initialize an algod client
         if (client == null) client = connectToNetwork()
 
@@ -106,11 +92,8 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
         val RECEIVER = "UVBYHRZIHUNUELDO6HWUAHOZF6G66W6T3JOXIIUSV3LDSBWVCFZ6LM6NCA"
 
         // Read program from file samplearg.teal
-        val source = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            readAllBytes(Paths.get("./samplearg.teal"))
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
+        val source = readAllBytes(Paths.get("./samplearg.teal"))
+
         // compile
         val response = client.TealCompile().source(source).execute(headers, values).body()
         // print results
@@ -161,6 +144,7 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
   override suspend fun accountDelegationExample() {
         // Initialize an algod client
         if (client == null) client = connectToNetwork()
@@ -171,12 +155,7 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
         val RECEIVER = USER_ADDRESS
 
         // Read program from file samplearg.teal
-        val source = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            readAllBytes(Paths.get("./samplearg.teal"))
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
-
+        val source = readAllBytes(Paths.get("./samplearg.teal"))
 
         // compile
         val response = client.TealCompile().source(source).execute().body()

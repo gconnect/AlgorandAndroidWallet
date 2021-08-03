@@ -9,6 +9,6 @@
         android:title="@string/stateless_smart_contract" />
     <item
         android:id="@+id/logout"
-        android:title="@string/Logout" />
+        android:title="@string/Logout"/>
 
 </menu>

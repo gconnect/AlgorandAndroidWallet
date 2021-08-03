@@ -6,25 +6,36 @@ import androidx.lifecycle.viewModelScope
 import com.africinnovate.algorandandroidkotlin.repository.StateLessContractRepository
 import com.africinnovate.algorandandroidkotlin.repository.StatefulContractRepository
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class StatelessSmartContractViewModel @ViewModelInject
 constructor(val repository: StateLessContractRepository) : ViewModel() {
 
-    fun compileTealSource(){
+    fun compileTealSource() {
         viewModelScope.launch {
-            repository.compileTealSource()
+            try {
+                repository.compileTealSource()
+            } catch (e: Exception) {
+                e.message
+            }
         }
     }
 
-    fun contractAccount(){
+    fun contractAccount() {
         viewModelScope.launch {
-            repository.contractAccountExample()
+            try {
+                repository.contractAccountExample()
+            } catch (e: Exception) {
+                Timber.e(e.message)
+            }
         }
     }
 
-    fun accountDelegation(){
+    fun accountDelegation() {
         viewModelScope.launch {
-            repository.accountDelegationExample()
+            try {
+                repository.accountDelegationExample()
+            }catch (e: Exception) {e.message}
         }
     }
 }

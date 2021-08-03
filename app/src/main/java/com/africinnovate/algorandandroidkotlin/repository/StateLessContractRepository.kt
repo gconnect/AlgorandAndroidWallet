@@ -9,5 +9,4 @@ interface StateLessContractRepository {
     suspend fun waitForConfirmation(txID: String)
     suspend fun contractAccountExample()
     suspend fun accountDelegationExample()
-
 }

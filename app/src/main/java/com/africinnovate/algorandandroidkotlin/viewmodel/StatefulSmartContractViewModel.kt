@@ -9,9 +9,13 @@ import kotlinx.coroutines.launch
 class StatefulSmartContractViewModel @ViewModelInject
 constructor(val repository: StatefulContractRepository) : ViewModel() {
 
-    fun statefulSmartContract(){
+    fun statefulSmartContract() {
         viewModelScope.launch {
-            repository.statefulSmartContract()
+            try {
+                repository.statefulSmartContract()
+            } catch (e: Exception) {
+                e.message
+            }
         }
     }
 }
