@@ -53,7 +53,7 @@ To get started, your android studio should be up and running. To get the code on
 # License
   Distributed under the MIT License. See [LICENSE](https://github.com/gconnect/AlgorandAndroidWallet/blob/master/LICENSE) for more information.
   
-# Blog and Vide Tutorial
+# Blog and Video Tutorial
 For more details you can checkout the blog post [here](https://developer.algorand.org/tutorials/creating-an-android-smart-contract-with-the-algorand-java-sdk-and-with-the-algorand-purestake-rest-api-using-kotlin/) and the video tutorial [here](https://www.youtube.com/watch?v=ToukVdeJhXU) .
 
 
