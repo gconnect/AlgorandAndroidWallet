@@ -32,7 +32,7 @@ To get started, your android studio should be up and running. To get the code on
 # Installation Guide
 
   To install the app, here is the link to the apk
-  [KotlinAlgorandAndroidApp](https://github.com/gconnect/AlgorandAndroidWallet/blob/master/debug.apk) .
+  [KotlinAlgorandAndroidApp](https://github.com/gconnect/AlgorandAndroidWallet/blob/master/app-debug.apk) .
   
 # How the app works
   After installation. This is what happens once any of the buttons are clicked;
