@@ -1,41 +1,52 @@
 package com.africinnovate.algorandandroidkotlin.viewmodel
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.africinnovate.algorandandroidkotlin.repository.StateLessContractRepository
 import com.africinnovate.algorandandroidkotlin.repository.StatefulContractRepository
+import com.algorand.algosdk.account.Account
+import com.algorand.algosdk.v2.client.model.CompileResponse
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class StatelessSmartContractViewModel @ViewModelInject
 constructor(val repository: StateLessContractRepository) : ViewModel() {
+    private val _response : MutableLiveData<CompileResponse> = MutableLiveData()
+    val response : LiveData<CompileResponse> get() = _response
 
-    fun compileTealSource() {
+    fun compileTealSource() : LiveData<CompileResponse> {
         viewModelScope.launch {
             try {
-                repository.compileTealSource()
+            _response.value = repository.compileTealSource()
             } catch (e: Exception) {
-                e.message
+                Timber.e(e)
             }
         }
+        return response
     }
 
-    fun contractAccount() {
+    fun contractAccount() : LiveData<CompileResponse> {
         viewModelScope.launch {
             try {
-                repository.contractAccountExample()
+              _response.value = repository.contractAccountExample()
             } catch (e: Exception) {
-                Timber.e(e.message)
+                Timber.e(e)
             }
         }
+        return response
     }
 
-    fun accountDelegation() {
+    fun accountDelegation() : LiveData<CompileResponse> {
         viewModelScope.launch {
             try {
-                repository.accountDelegationExample()
-            }catch (e: Exception) {e.message}
+               _response.value = repository.accountDelegationExample()
+            }catch (e: Exception) {
+                Timber.e(e)
+            }
         }
+        return response
     }
 }

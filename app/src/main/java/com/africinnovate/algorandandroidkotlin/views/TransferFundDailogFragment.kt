@@ -11,7 +11,9 @@ import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.africinnovate.algorandandroidkotlin.R
+import com.africinnovate.algorandandroidkotlin.Resource
 import com.africinnovate.algorandandroidkotlin.databinding.TransferFundBinding
 import com.africinnovate.algorandandroidkotlin.viewmodel.TransactionViewmodel
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,7 +51,7 @@ class TransferFundDailogFragment : DialogFragment() {
 
     private fun validateTransfer() {
         val amount = binding.amount.text.toString().trim()
-        val receiverAddress : String = binding.address.text.toString()
+        val receiverAddress: String = binding.address.text.toString()
 
         if (amount.isEmpty() && receiverAddress.isEmpty()) {
             Toast.makeText(context, "Fields must be filled", Toast.LENGTH_LONG).show()
@@ -68,7 +70,6 @@ class TransferFundDailogFragment : DialogFragment() {
         )
     }
 
-
     companion object {
         fun newInstance(amount: Long, address: String): TransferFundDailogFragment? {
             val dialog = TransferFundDailogFragment()
@@ -79,4 +80,6 @@ class TransferFundDailogFragment : DialogFragment() {
             return dialog
         }
     }
+
+
 }

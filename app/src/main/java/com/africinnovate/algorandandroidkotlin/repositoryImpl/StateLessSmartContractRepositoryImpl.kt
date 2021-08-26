@@ -1,12 +1,9 @@
 package com.africinnovate.algorandandroidkotlin.repositoryImpl
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.africinnovate.algorandandroidkotlin.ClientService.APIService
 import com.africinnovate.algorandandroidkotlin.repository.StateLessContractRepository
 import com.africinnovate.algorandandroidkotlin.utils.Constants
-import com.africinnovate.algorandandroidkotlin.utils.Constants.CREATOR_MNEMONIC
-import com.africinnovate.algorandandroidkotlin.utils.Constants.USER_ADDRESS
+import com.africinnovate.algorandandroidkotlin.utils.Constants.ALGOD_API_ADDR
 import com.algorand.algosdk.account.Account
 import com.algorand.algosdk.algod.client.ApiException
 import com.algorand.algosdk.crypto.Address
@@ -16,20 +13,23 @@ import com.algorand.algosdk.transaction.Transaction
 import com.algorand.algosdk.util.Encoder
 import com.algorand.algosdk.v2.client.common.AlgodClient
 import com.algorand.algosdk.v2.client.common.Response
+import com.algorand.algosdk.v2.client.model.CompileResponse
 import com.algorand.algosdk.v2.client.model.PendingTransactionResponse
 import org.apache.commons.lang3.ArrayUtils
+import org.bouncycastle.util.encoders.UTF8
 import org.json.JSONObject
 import timber.log.Timber
+import java.nio.file.Files
 import java.nio.file.Files.readAllBytes
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 import javax.inject.Inject
 
 
-class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiService: APIService) : StateLessContractRepository {
+class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiService: APIService) :
+    StateLessContractRepository {
     private var client: AlgodClient = AlgodClient(
-        Constants.ALGOD_API_ADDR,
+        ALGOD_API_ADDR,
         Constants.ALGOD_PORT,
         Constants.ALGOD_API_TOKEN,
     )
@@ -45,29 +45,33 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
     val txHeaders: Array<String> = ArrayUtils.add(headers, "Content-Type")
     val txValues: Array<String> = ArrayUtils.add(values, "application/x-binary")
 
-  @RequiresApi(Build.VERSION_CODES.O)
-  override suspend fun compileTealSource() {
+    override suspend fun compileTealSource(): CompileResponse {
         // Initialize an algod client
         if (client == null) client = connectToNetwork()
 
-      // read file - int 0
-      val data = readAllBytes(Paths.get("./sample.teal"))
+        // read file - int 0
+//      val data: ByteArray = Files.readAllBytes(Paths.get("/sample.teal"))
+//        val data = byteArrayOf(0)
+        val data1 = "int 0"
 
-      val response = client.TealCompile().source(data).execute().body()
-      // print results
-      Timber.d("response: $response")
-      Timber.d("Hash: " + response.hash)
-      Timber.d("Result: " + response.result)
+//        Timber.d("data : ${data.contentToString()}")
 
-  }
-  override suspend fun waitForConfirmation(txID: String) {
+        val response: CompileResponse = client.TealCompile().source(data1.toByteArray(charset("UTF-8"))).execute(headers,values).body()
+        // print results
+        Timber.d("response: $response")
+        Timber.d("Hash: " + response.hash)
+        Timber.d("Result: " + response.result)
+        return response
+    }
+
+    override suspend fun waitForConfirmation(txID: String) {
         if (client == null) client = connectToNetwork()
         var lastRound = client.GetStatus().execute(headers, values).body().lastRound
         while (true) {
             try {
                 // Check the pending transactions
                 val pendingInfo: Response<PendingTransactionResponse> =
-                    client.PendingTransactionInformation(txID).execute()
+                    client.PendingTransactionInformation(txID).execute(headers, values)
                 if (pendingInfo.body().confirmedRound != null && pendingInfo.body().confirmedRound > 0) {
                     // Got the completed Transaction
                     println(
@@ -83,19 +87,23 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun contractAccountExample() {
+    override suspend fun contractAccountExample() : CompileResponse{
         // Initialize an algod client
         if (client == null) client = connectToNetwork()
 
         // Set the receiver
-        val RECEIVER = "UVBYHRZIHUNUELDO6HWUAHOZF6G66W6T3JOXIIUSV3LDSBWVCFZ6LM6NCA"
+        val RECEIVER = "QUDVUXBX4Q3Y2H5K2AG3QWEOMY374WO62YNJFFGUTMOJ7FB74CMBKY6LPQ"
 
         // Read program from file samplearg.teal
-        val source = readAllBytes(Paths.get("./samplearg.teal"))
-
+//        val source = readAllBytes(Paths.get("./samplearg.teal"))
+        val source = """
+            arg_0
+            btoi
+            int 123
+            ==
+        """.trimIndent()
         // compile
-        val response = client.TealCompile().source(source).execute(headers, values).body()
+        val response = client.TealCompile().source(source.toByteArray(charset("UTF-8"))).execute(headers, values).body()
         // print results
         println("response: $response")
         println("Hash: " + response.hash)
@@ -142,23 +150,30 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
         } catch (e: ApiException) {
             System.err.println("Exception when calling algod#rawTransaction: " + e.getResponseBody())
         }
+        return response
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-  override suspend fun accountDelegationExample() {
+    override suspend fun accountDelegationExample() : CompileResponse{
         // Initialize an algod client
         if (client == null) client = connectToNetwork()
         // import your private key mnemonic and address
-        val SRC_ACCOUNT = CREATOR_MNEMONIC
+        val SRC_ACCOUNT =
+            "buzz genre work meat fame favorite rookie stay tennis demand panic busy hedgehog snow morning acquire ball grain grape member blur armor foil ability seminar"
+
         val src = Account(SRC_ACCOUNT)
         // Set the receiver
-        val RECEIVER = USER_ADDRESS
+        val RECEIVER = "QUDVUXBX4Q3Y2H5K2AG3QWEOMY374WO62YNJFFGUTMOJ7FB74CMBKY6LPQ"
 
         // Read program from file samplearg.teal
-        val source = readAllBytes(Paths.get("./samplearg.teal"))
-
+//        val source = readAllBytes(Paths.get("./samplearg.teal"))
+        val source = """
+            arg_0
+            btoi
+            int 123
+            ==
+        """.trimIndent()
         // compile
-        val response = client.TealCompile().source(source).execute().body()
+        val response = client.TealCompile().source(source.toByteArray(charset("UTF-8"))).execute(headers, values).body()
         // print results
         println("response: $response")
         println("Hash: " + response.hash)
@@ -197,7 +212,8 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
             val stx = Account.signLogicsigTransaction(lsig, txn)
             // send raw LogicSigTransaction to network
             val encodedTxBytes = Encoder.encodeToMsgPack(stx)
-            val id = client.RawTransaction().rawtxn(encodedTxBytes).execute(txHeaders, txValues).body().txId
+            val id = client.RawTransaction().rawtxn(encodedTxBytes).execute(txHeaders, txValues)
+                .body().txId
             // Wait for transaction confirmation
             waitForConfirmation(id)
             println("Successfully sent tx with id: $id")
@@ -209,7 +225,6 @@ class StateLessSmartContractRepositoryImpl @Inject constructor(private val apiSe
         } catch (e: ApiException) {
             System.err.println("Exception when calling algod#rawTransaction: " + e.responseBody)
         }
+        return response
     }
-
-
 }

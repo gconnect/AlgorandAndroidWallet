@@ -1,6 +1,5 @@
 package com.africinnovate.algorandandroidkotlin.repositoryImpl
 
-import android.os.Build
 import com.africinnovate.algorandandroidkotlin.ClientService.APIService
 import com.africinnovate.algorandandroidkotlin.repository.StatefulContractRepository
 import com.africinnovate.algorandandroidkotlin.utils.Constants
@@ -8,6 +7,7 @@ import com.africinnovate.algorandandroidkotlin.utils.Constants.ALGOD_API_ADDR
 import com.africinnovate.algorandandroidkotlin.utils.Constants.ALGOD_API_TOKEN
 import com.africinnovate.algorandandroidkotlin.utils.Constants.ALGOD_PORT
 import com.africinnovate.algorandandroidkotlin.utils.Constants.CREATOR_MNEMONIC
+import com.africinnovate.algorandandroidkotlin.utils.Constants.SRC_MNEMONIC
 import com.africinnovate.algorandandroidkotlin.utils.Constants.USER_MNEMONIC
 import com.algorand.algosdk.account.Account
 import com.algorand.algosdk.crypto.Address
@@ -24,23 +24,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.commons.lang3.ArrayUtils
 import timber.log.Timber
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
-import com.algorand.algosdk.v2.client.model.TransactionParametersResponse
 
 
 class StatefulContractRepositoryImpl @Inject constructor(private val apiService: APIService) :
     StatefulContractRepository {
 
    private var client: AlgodClient = AlgodClient(
-        ALGOD_API_ADDR,
-        ALGOD_PORT,
-        ALGOD_API_TOKEN,
-    )
+       ALGOD_API_ADDR,
+       ALGOD_PORT,
+       ALGOD_API_TOKEN,
+   )
 
     // utility function to connect to a node
     private fun connectToNetwork(): AlgodClient {
@@ -157,11 +154,6 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
         val signedTxn: SignedTransaction = creator.signTransaction(txn)
         Timber.d("Signed transaction with txid: \" + ${signedTxn.transactionID}")
 
-        // send to network
-//        val encodedTxBytes: ByteArray = encodeToMsgPack(signedTxn)
-//        val id: String =
-//            client.RawTransaction().rawtxn(encodedTxBytes).execute(txHeaders, txValues).body().txId
-//        Timber.d("Successfully sent tx with ID: $id")
         var id = ""
         try {
             // Submit the transaction to the network
@@ -177,14 +169,11 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
               id = rawtxresponse.body().txId
                 Timber.d("Successfully sent tx with ID: $id")
                 waitForConfirmation(id)
+
             }
-        }catch (e : Exception){
+        }catch (e: Exception){
             e.message
         }
-
-        // await confirmation
-//        waitForConfirmation(id)
-
         // display results
         val pTrx: PendingTransactionResponse? =
             client.PendingTransactionInformation(id).execute(headers, values).body()
@@ -193,8 +182,7 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
         return appId
     }
 
-    override suspend fun optInApp(client: AlgodClient, account: Account, appId: Long?) {
-        withContext(Dispatchers.IO) {
+    override suspend fun optInApp(client: AlgodClient, account: Account, appId: Long?) : Long {
             // declare sender
             val sender: Address = account.address
             println("OptIn from account: $sender")
@@ -221,31 +209,11 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             // await confirmation
             waitForConfirmation(id)
 
-       /*     var id = ""
-            try {
-                // Submit the transaction to the network
-                val encodedTxBytes: ByteArray = encodeToMsgPack(signedTxn)
-                val rawtxresponse = client.RawTransaction().rawtxn(encodedTxBytes).execute(
-                    txHeaders,
-                    txValues
-                )
-                if (!rawtxresponse.isSuccessful) {
-                    Timber.d("raw ${rawtxresponse.message()}")
-                    throw Exception(rawtxresponse.message())
-                } else {
-                    id = rawtxresponse.body().txId
-                    Timber.d("Successfully sent tx with ID: $id")
-                    waitForConfirmation(id)
-                }
-            }catch (e : Exception){
-                e.message
-            }*/
-
             // display results
             val pTrx: PendingTransactionResponse =
                 client.PendingTransactionInformation(id).execute(headers, values).body()
             Timber.d("OptIn to app-id: %s", pTrx.txn.tx.applicationId)
-        }
+        return pTrx.txn.tx.applicationId
     }
 
     override suspend fun callApp(
@@ -253,8 +221,7 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
         account: Account,
         appId: Long?,
         appArgs: List<ByteArray>?
-    ) {
-        withContext(Dispatchers.IO) {
+    ) : Long{
             // declare sender
             val sender: Address = account.address
             println("Call from account: $sender")
@@ -273,9 +240,9 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             val signedTxn: SignedTransaction = account.signTransaction(txn)
 
             // save signed transaction to  a file
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Files.write(Paths.get("./callArgs.stxn"), encodeToMsgPack(signedTxn))
-            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                Files.write(Paths.get("callArgs.stxn"), encodeToMsgPack(signedTxn))
+//            }
 
             // send to network
           /*  val encodedTxBytes: ByteArray = encodeToMsgPack(signedTxn)
@@ -301,7 +268,7 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
                     Timber.d("Successfully sent tx with ID: $id")
                     waitForConfirmation(id)
                 }
-            }catch (e : Exception){
+            }catch (e: Exception){
                 e.message
             }
 
@@ -315,12 +282,10 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             if (pTrx.localStateDelta != null) {
                 Timber.d("Local state: \" + pTrx.localStateDelta.toString()")
             }
-        }
-
+        return pTrx.txn.tx.applicationId
     }
 
-    override suspend fun readLocalState(client: AlgodClient, account: Account, appId: Long?) {
-        withContext(Dispatchers.IO) {
+    override suspend fun readLocalState(client: AlgodClient, account: Account, appId: Long?) : String{
             val acctResponse: Response<com.algorand.algosdk.v2.client.model.Account> =
                 client.AccountInformation(account.address).execute(headers, values)
             val applicationLocalState: List<ApplicationLocalState> =
@@ -333,12 +298,10 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
                     )
                 }
             }
-        }
-
+        return applicationLocalState.toString()
     }
 
-    override suspend fun readGlobalState(client: AlgodClient, account: Account, appId: Long?) {
-        withContext(Dispatchers.IO) {
+    override suspend fun readGlobalState(client: AlgodClient, account: Account, appId: Long?) : String{
             val acctResponse: Response<com.algorand.algosdk.v2.client.model.Account> =
                 client.AccountInformation(account.address).execute(headers, values)
             val createdApplications: List<Application> = acctResponse.body().createdApps
@@ -347,7 +310,7 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
                     Timber.d("Application global state:  ${createdApplications[i].params.globalState.toString()}")
                 }
             }
-        }
+        return createdApplications.toString()
     }
 
     override suspend fun updateApp(
@@ -356,8 +319,7 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
         appId: Long?,
         approvalProgramSource: TEALProgram?,
         clearProgramSource: TEALProgram?
-    ) {
-        withContext(Dispatchers.IO) {
+    ) : PendingTransactionResponse{
             // define sender as creator
             val sender: Address = creator.address
 
@@ -389,13 +351,12 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             val pTrx: PendingTransactionResponse =
                 client.PendingTransactionInformation(id).execute(headers, values).body()
             Timber.d("Updated new app-id: $appId and $pTrx")
-        }
-
+        return pTrx
     }
 
 
-    override suspend fun closeOutApp(client: AlgodClient, userAccount: Account, appId: Long?) {
-        withContext(Dispatchers.IO) {
+    override suspend fun closeOutApp(client: AlgodClient, userAccount: Account, appId: Long?) : PendingTransactionResponse {
+
             // define sender as creator
             val sender: Address = userAccount.address
 
@@ -425,11 +386,10 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             val pTrx: PendingTransactionResponse =
                 client.PendingTransactionInformation(id).execute(headers, values).body()
             Timber.d("Closed out from app-id: $appId and $pTrx")
-        }
+        return pTrx
     }
 
-    override suspend fun clearApp(client: AlgodClient, userAccount: Account, appId: Long?) {
-        withContext(Dispatchers.IO) {
+    override suspend fun clearApp(client: AlgodClient, userAccount: Account, appId: Long?) : PendingTransactionResponse{
             // define sender as creator
             val sender: Address = userAccount.address
 
@@ -461,11 +421,10 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             val pTrx: PendingTransactionResponse =
                 client.PendingTransactionInformation(id).execute(headers, values).body()
             Timber.d("Cleared local state for app-id: $appId and $pTrx")
-        }
+        return pTrx
     }
 
-    override suspend fun deleteApp(client: AlgodClient, creatorAccount: Account, appId: Long?) {
-        withContext(Dispatchers.IO) {
+    override suspend fun deleteApp(client: AlgodClient, creatorAccount: Account, appId: Long?) : PendingTransactionResponse {
             // define sender as creator
             val sender: Address = creatorAccount.address
 
@@ -497,7 +456,7 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             val pTrx: PendingTransactionResponse =
                 client.PendingTransactionInformation(id).execute(headers, values).body()
             Timber.d("Deleted app-id: $appId and $pTrx")
-        }
+        return pTrx
 
     }
 
@@ -543,7 +502,7 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             handle_noop:
             //// Handle NoOp
             //// Check for creator
-            addr 5XWY6RBNYHCSY2HK5HCTO62DUJJ4PT3G4L77FQEBUKE6ZYRGQAFTLZSQQ4
+            addr FR23WI5ZTTRNYTXHA73GIJNS6BDXR3PZA6WETQF7IO6YBBYBS27TXUDNPI
             txn Sender
             ==
             bnz handle_optin
@@ -587,13 +546,13 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             return
             handle_deleteapp:
             //// Check for creator
-            addr 5XWY6RBNYHCSY2HK5HCTO62DUJJ4PT3G4L77FQEBUKE6ZYRGQAFTLZSQQ4
+            addr FR23WI5ZTTRNYTXHA73GIJNS6BDXR3PZA6WETQF7IO6YBBYBS27TXUDNPI
             txn Sender
             ==
             return
             handle_updateapp:
             //// Check for creator
-            addr 5XWY6RBNYHCSY2HK5HCTO62DUJJ4PT3G4L77FQEBUKE6ZYRGQAFTLZSQQ4
+            addr FR23WI5ZTTRNYTXHA73GIJNS6BDXR3PZA6WETQF7IO6YBBYBS27TXUDNPI
             txn Sender
             ==
             return
@@ -631,7 +590,7 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             handle_noop:
             //// Handle NoOp
             //// Check for creator
-            addr 5XWY6RBNYHCSY2HK5HCTO62DUJJ4PT3G4L77FQEBUKE6ZYRGQAFTLZSQQ4
+            addr FR23WI5ZTTRNYTXHA73GIJNS6BDXR3PZA6WETQF7IO6YBBYBS27TXUDNPI
             txn Sender
             ==
             bnz handle_optin
@@ -681,13 +640,13 @@ class StatefulContractRepositoryImpl @Inject constructor(private val apiService:
             return
             handle_deleteapp:
             //// Check for creator
-            addr 5XWY6RBNYHCSY2HK5HCTO62DUJJ4PT3G4L77FQEBUKE6ZYRGQAFTLZSQQ4
+            addr FR23WI5ZTTRNYTXHA73GIJNS6BDXR3PZA6WETQF7IO6YBBYBS27TXUDNPI
             txn Sender
             ==
             return
             handle_updateapp:
             //// Check for creator
-            addr 5XWY6RBNYHCSY2HK5HCTO62DUJJ4PT3G4L77FQEBUKE6ZYRGQAFTLZSQQ4
+            addr FR23WI5ZTTRNYTXHA73GIJNS6BDXR3PZA6WETQF7IO6YBBYBS27TXUDNPI
             txn Sender
             ==
             return

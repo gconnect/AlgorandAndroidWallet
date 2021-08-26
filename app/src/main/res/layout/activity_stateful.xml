@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".views.StatefulActivity">
+
+            <TextView
+                android:id="@+id/stfl_output"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="60dp"
+                />
+            <Button
+                android:id="@+id/compile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Compile Program"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/stfl_output"
+                />
+            <Button
+                android:id="@+id/createApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create App"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/compile"
+                />
+            <Button
+                android:id="@+id/optInApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OptIn App"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/createApp"
+                />
+            <Button
+                android:id="@+id/callApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Call App"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/optInApp"
+                />
+            <Button
+                android:id="@+id/read_localState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Read Local State"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/callApp"
+                />
+            <Button
+                android:id="@+id/read_globalState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Read Global State"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/read_localState"
+                />
+            <Button
+                android:id="@+id/updateApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Update App"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/read_globalState"
+                />
+            <Button
+                android:id="@+id/closeOutApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Close Out App"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/updateApp"
+                />
+            <Button
+                android:id="@+id/clearApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clear App"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/closeOutApp"
+                />
+            <Button
+                android:id="@+id/deleteApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delete App"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/clearApp"
+                />
+            <Button
+                android:id="@+id/stateful"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="All Stateful Log"
+                android:layout_margin="24dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toBottomOf="@id/deleteApp"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

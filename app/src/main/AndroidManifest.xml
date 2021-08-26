@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".Application"
@@ -14,10 +15,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AlgorandAndroidKotlin"
         android:usesCleartextTraffic="true">
+        <activity android:name=".views.StatefulActivity"
+            android:label="Stateful Smart Contract">
+        </activity>
+        <activity android:name=".views.StatelessActivity"
+            android:label="Stateless Smart Contract"/>
         <activity
             android:name=".views.Dashboard"
             android:label="Dashboard (TESTNET ACCOUNT)" />
-        <activity android:name=".views.MainActivity" android:label="Algorand Wallet">
+        <activity
+            android:name=".views.MainActivity"
+            android:label="Algorand Wallet">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

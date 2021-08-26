@@ -21,6 +21,7 @@ import com.africinnovate.algorandandroidkotlin.databinding.ActivityDashboardBind
 import com.africinnovate.algorandandroidkotlin.model.Transactions
 import com.africinnovate.algorandandroidkotlin.utils.Constants
 import com.africinnovate.algorandandroidkotlin.utils.Constants.CREATOR_ADDRESS
+import com.africinnovate.algorandandroidkotlin.utils.Constants.SRC_ADDRESS
 import com.africinnovate.algorandandroidkotlin.viewmodel.AccountViewmodel
 import com.africinnovate.algorandandroidkotlin.viewmodel.TransactionViewmodel
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,9 +62,9 @@ class Dashboard : AppCompatActivity() {
 
         binding.copy.setOnClickListener {
             val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("label", CREATOR_ADDRESS)
+            val clip = ClipData.newPlainText("label", SRC_ADDRESS)
             clipboard.setPrimaryClip(clip)
-            Toast.makeText(this, CREATOR_ADDRESS, Toast.LENGTH_LONG).show()
+            Toast.makeText(this, SRC_ADDRESS, Toast.LENGTH_LONG).show()
         }
 
         binding.root
@@ -82,28 +83,32 @@ class Dashboard : AppCompatActivity() {
      * The [setData] sets the data on the recyclerview
      */
     private fun setData() {
-        transactionViewModel.getTransactions(CREATOR_ADDRESS).observe(this, Observer {
+        transactionViewModel.getTransactions(Constants.SRC_ADDRESS).observe(this, Observer {
             transactions = it.transactions
             Timber.d("Transactions ${transactions.size}")
+            try {
+                if (transactions.isNotEmpty()) {
+                    binding.recyclerview.visibility = View.VISIBLE
+                    myAdapter.setData(transactions)
+                    binding.emptyState.visibility = View.GONE
 
-            if (transactions.isNotEmpty()) {
-                binding.recyclerview.visibility = View.VISIBLE
-                myAdapter.setData(transactions)
-                binding.emptyState.visibility = View.GONE
-
-            } else {
-                binding.recyclerview.visibility = View.GONE
-                binding.emptyState.visibility = View.VISIBLE
+                } else {
+                    binding.recyclerview.visibility = View.GONE
+                    binding.emptyState.visibility = View.VISIBLE
+                }
+            }catch (e : java.lang.Exception){
+                Timber.d(e)
             }
+
         })
     }
 
     private fun getWalletBalance() {
-        viewModel.getAccount(CREATOR_ADDRESS)
+        viewModel.getAccount(Constants.SRC_ADDRESS)
             .observe(this, {
                 try {
                     binding.balance.text = it.account.amount.toString()
-                    Timber.d("amount ${it.account.amount}")
+                    Timber.d("amount  ${it.account.amount}")
                 } catch (e: Exception) {
                     e.message
                 }
@@ -152,11 +157,11 @@ class Dashboard : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.stateless_smart_contract -> {
-                Toast.makeText(this, "message", Toast.LENGTH_LONG).show()
+                startActivity(Intent(this, StatelessActivity::class.java))
                 true
             }
             R.id.stateful_smart_contract -> {
-                Toast.makeText(this, "message", Toast.LENGTH_LONG).show()
+                startActivity(Intent(this, StatefulActivity::class.java))
                 true
             }
             R.id.logout -> {
