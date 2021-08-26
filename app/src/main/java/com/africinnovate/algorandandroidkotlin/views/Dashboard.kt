@@ -40,7 +40,11 @@ class Dashboard : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 //        setContentView(R.layout.activity_dashboard)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
-
+        binding.swipe.setOnRefreshListener {
+            getWalletBalance()
+            setData()
+            binding.swipe.isRefreshing = false
+        }
         getWalletBalance()
         initializeRecyclerView()
         setData()
@@ -104,7 +108,7 @@ class Dashboard : AppCompatActivity() {
     }
 
     private fun getWalletBalance() {
-        viewModel.getAccount(Constants.SRC_ADDRESS)
+        viewModel.getAccount(SRC_ADDRESS)
             .observe(this, {
                 try {
                     binding.balance.text = it.account.amount.toString()
