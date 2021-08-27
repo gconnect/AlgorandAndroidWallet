@@ -17,6 +17,9 @@ The sample application here was done following Kotlin\Android development best p
 
 ![Screens](https://github.com/gconnect/AlgorandAndroidWallet/blob/master/screens.png)
 
+ Link to the demo video: https://github.com/gconnect/AlgorandAndroidWallet/blob/master/demo_app.mp4
+
+
 # Requirements
 
 * Android studio setup
